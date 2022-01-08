@@ -1,5 +1,5 @@
-const CAPACITY: usize = 500;
 use super::*;
+const CAPACITY: usize = 500;
 
 #[derive(Debug, Clone, Copy)]
 pub enum Direction {
@@ -17,7 +17,25 @@ pub struct Snake<'game> {
     board: &'game mut [[CellType; SIZE]; SIZE],
 }
 
-impl<'a> Snake<'a> {
+impl<'game> Snake<'game> {
+    pub fn new(board: &'game mut [[CellType; SIZE]; SIZE], dir: Direction) -> Snake<'game> {
+        let starting_snake = [(0usize, 0usize), (1usize, 0usize)];
+        let mut segments = [(0usize, 0usize); CAPACITY];
+        let len = starting_snake.len();
+        let head = starting_snake.len() - 1;
+        for (st, seg) in starting_snake.into_iter().zip(segments.iter_mut()) {
+            *seg = st;
+            board[st.0][st.1] = CellType::Snake;
+        }
+        Snake {
+            segments,
+            head,
+            len,
+            dir,
+            board,
+        }
+    }
+
     fn move_snake(&mut self, dir: Option<Direction>) {
         let mut head = self.head;
         let dir = if let Some(d) = dir { d } else { self.dir };
