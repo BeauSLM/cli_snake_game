@@ -1,7 +1,7 @@
 use super::*;
 pub const CAPACITY: usize = 500;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Direction {
     Left,
     Up,
@@ -21,9 +21,9 @@ impl Snake {
         assert!(starting_snake.len() < CAPACITY);
         let mut segments = [(0usize, 0usize); CAPACITY];
         let len = starting_snake.len();
-        let head = starting_snake.len() - 1;
-        for (st, seg) in starting_snake.into_iter().zip(segments.iter_mut()) {
-            *seg = *st;
+        let head = len - 1;
+        for (seg, start) in segments.iter_mut().zip(starting_snake) {
+            *seg = *start;
         }
         Snake {
             segments,
@@ -35,20 +35,22 @@ impl Snake {
 
     pub fn next_square(&mut self, dir: Option<Direction>) -> (usize, usize) {
         let mut head = self.head;
-        let dir = if let Some(d) = dir { d } else { self.dir };
-        let (mut new_head_x, mut new_head_y) = self.segments[head];
+        let mut dir = if let Some(d) = dir { d } else { self.dir };
+        if !self.legal_turns().contains(&dir) { dir = self.dir; }
+        let (mut new_row, mut new_col) = self.segments[head];
         let mut out_of_bounds = false;
         match dir {
-            Direction::Left => if new_head_x == 0 { out_of_bounds = true; } else { new_head_x -= 1; },
-            Direction::Up => if new_head_y == 0 { out_of_bounds = true; } else { new_head_y -= 1; },
-            Direction::Right => if new_head_x == SIZE - 1 { out_of_bounds = true; } else { new_head_x += 1; },
-            Direction::Down => if new_head_y == SIZE - 1 { out_of_bounds = true; } else { new_head_y += 1; },
+            Direction::Left => if new_col == 0 { out_of_bounds = true; } else { new_col -= 1; },
+            Direction::Up => if new_row == 0 { out_of_bounds = true; } else { new_row -= 1; },
+            Direction::Right => if new_col == SIZE - 1 { out_of_bounds = true; } else { new_col += 1; },
+            Direction::Down => if new_row == SIZE - 1 { out_of_bounds = true; } else { new_row += 1; },
         }
         if out_of_bounds { panic!("Out of bounds!"); }
         self.dir = dir;
-        head = (self.head + 1) % CAPACITY;
-        self.segments[head] = (new_head_x, new_head_y);
-        (new_head_x, new_head_y)
+        head = (head + 1) % CAPACITY;
+        self.segments[head] = (new_row, new_col);
+        self.head = head;
+        (new_row, new_col)
     }
 
     pub fn eat(&mut self) {
@@ -64,10 +66,10 @@ impl Snake {
         self.segments[tail_index]
     }
 
-    fn legal_turns(dir: Direction) -> (Direction, Direction) {
-        match dir {
-            Direction::Left | Direction::Right => (Direction::Down, Direction::Up),
-            Direction::Up | Direction::Down => (Direction::Left, Direction::Right),
+    fn legal_turns(&self) -> [Direction; 2] {
+        match self.dir {
+            Direction::Left | Direction::Right => [Direction::Down, Direction::Up],
+            Direction::Up | Direction::Down => [Direction::Left, Direction::Right],
         }
     }
 }
