@@ -1,5 +1,5 @@
 use super::*;
-const CAPACITY: usize = 500;
+pub const CAPACITY: usize = 500;
 
 #[derive(Debug, Clone, Copy)]
 pub enum Direction {
@@ -9,35 +9,30 @@ pub enum Direction {
     Down,
 }
 
-pub struct Snake<'game> {
+pub struct Snake {
     segments: [(usize, usize); CAPACITY],
     head: usize,
     len: usize,
     dir: Direction,
-    board: &'game mut [[CellType; SIZE]; SIZE],
 }
 
-impl<'game> Snake<'game> {
-    pub fn new(board: &'game mut [[CellType; SIZE]; SIZE]) -> Snake<'game> {
-        let starting_snake = [(0usize, 0usize), (1usize, 0usize)];
-        let dir = Direction::Right;
+impl Snake {
+    pub fn new(starting_snake: &[(usize, usize)], dir: Direction) -> Snake {
         let mut segments = [(0usize, 0usize); CAPACITY];
         let len = starting_snake.len();
         let head = starting_snake.len() - 1;
         for (st, seg) in starting_snake.into_iter().zip(segments.iter_mut()) {
-            *seg = st;
-            board[st.0][st.1] = CellType::Snake;
+            *seg = *st;
         }
         Snake {
             segments,
             head,
             len,
             dir,
-            board,
         }
     }
 
-    pub fn move_snake(&mut self, dir: Option<Direction>) {
+    pub fn next_square(&mut self, dir: Option<Direction>) -> (usize, usize) {
         let mut head = self.head;
         let dir = if let Some(d) = dir { d } else { self.dir };
         let (mut new_head_x, mut new_head_y) = self.segments[head];
@@ -49,20 +44,23 @@ impl<'game> Snake<'game> {
             Direction::Down => if new_head_y == SIZE - 1 { out_of_bounds = true; } else { new_head_y += 1; },
         }
         if out_of_bounds { panic!("Out of bounds!"); }
-        match self.board[new_head_x][new_head_y] {
-            CellType::Snake => { panic!("Ate yourself!"); },
-            CellType::Food => { self.len += 1; },
-            CellType::Empty => {
-                // clean out tail
-                let tail_index = if head < self.len { CAPACITY - self.len + head } else { head - self.len };
-                let (tail_x, tail_y) = self.segments[tail_index];
-                self.board[tail_x][tail_y] = CellType::Empty;
-            }
-        }
-        self.board[new_head_x][new_head_y] = CellType::Snake;
         self.dir = dir;
         head = (self.head + 1) % CAPACITY;
         self.segments[head] = (new_head_x, new_head_y);
+        (new_head_x, new_head_y)
+    }
+
+    pub fn eat(&mut self) {
+        self.len += 1;
+    }
+
+    pub fn old_tail(&self) -> (usize, usize) {
+        let tail_index = if self.head < self.len {
+            CAPACITY - self.len + self.head
+        } else {
+            self.head - self.len
+        };
+        self.segments[tail_index]
     }
 
     fn legal_turns(dir: Direction) -> (Direction, Direction) {
