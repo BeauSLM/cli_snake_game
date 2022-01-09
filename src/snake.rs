@@ -18,6 +18,7 @@ pub struct Snake {
 
 impl Snake {
     pub fn new(starting_snake: &[(usize, usize)], dir: Direction) -> Snake {
+        assert!(starting_snake.len() < CAPACITY);
         let mut segments = [(0usize, 0usize); CAPACITY];
         let len = starting_snake.len();
         let head = starting_snake.len() - 1;

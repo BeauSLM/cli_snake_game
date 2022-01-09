@@ -23,7 +23,6 @@ pub enum CellType {
 }
 
 pub fn setup(segments: &[(usize, usize)], food: &[(usize, usize)], dir: Direction) -> ([[CellType; SIZE]; SIZE], Snake) {
-    assert!(segments.len() < CAPACITY);
     assert!(food.len() + segments.len() < SIZE * SIZE);
     let mut board = [[CellType::Empty; SIZE]; SIZE];
     for (x, y) in segments {
@@ -42,7 +41,7 @@ pub fn setup(segments: &[(usize, usize)], food: &[(usize, usize)], dir: Directio
 }
 
 pub fn run() {
-    let (mut board, mut snake) = setup(&[], &[], Direction::Right);
+    let (mut board, mut snake) = setup(&[(0, 0), (1, 0)], &[(SIZE/2, SIZE/2)], Direction::Right);
     let writer = stdout();
     let mut writer = writer.lock().into_raw_mode().unwrap();
     let mut square;
@@ -74,10 +73,14 @@ pub fn run() {
             }
         }
         board[square.0][square.1] = CellType::Snake;
-        let mut print_string = String::from("");
+        let mut print_string = String::with_capacity(SIZE * SIZE);
         for row in board.iter() {
             for cell in row {
-                unimplemented!();
+                print_string.push(match cell {
+                    &CellType::Snake => '*',
+                    &CellType::Food => '0',
+                    _ => ' '
+                });
             }
             print_string += "\n";
         }
@@ -85,3 +88,4 @@ pub fn run() {
         writer.flush().unwrap();
     }
 }
+
