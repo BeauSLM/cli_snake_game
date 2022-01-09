@@ -1,3 +1,4 @@
+use snake_game::run;
 fn main() {
-    println!("Hello, world!");
+    run();
 }

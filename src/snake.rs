@@ -18,8 +18,9 @@ pub struct Snake<'game> {
 }
 
 impl<'game> Snake<'game> {
-    pub fn new(board: &'game mut [[CellType; SIZE]; SIZE], dir: Direction) -> Snake<'game> {
+    pub fn new(board: &'game mut [[CellType; SIZE]; SIZE]) -> Snake<'game> {
         let starting_snake = [(0usize, 0usize), (1usize, 0usize)];
+        let dir = Direction::Right;
         let mut segments = [(0usize, 0usize); CAPACITY];
         let len = starting_snake.len();
         let head = starting_snake.len() - 1;
@@ -36,7 +37,7 @@ impl<'game> Snake<'game> {
         }
     }
 
-    fn move_snake(&mut self, dir: Option<Direction>) {
+    pub fn move_snake(&mut self, dir: Option<Direction>) {
         let mut head = self.head;
         let dir = if let Some(d) = dir { d } else { self.dir };
         let (mut new_head_x, mut new_head_y) = self.segments[head];
