@@ -9,6 +9,7 @@ pub(crate) enum Direction {
     Down,
 }
 
+// this is a struct because i may have multiple snakes at some point
 pub(crate) struct Snake {
     segments: [(usize, usize); CAPACITY],
     head: usize,
@@ -33,7 +34,7 @@ impl Snake {
         }
     }
 
-    pub(crate) fn next_square(&mut self, dir: Option<Direction>) -> (usize, usize) {
+    pub(crate) fn move_snake(&mut self, dir: Option<Direction>) -> (usize, usize) {
         let mut head = self.head;
         let mut dir = if let Some(d) = dir { d } else { self.dir };
         if !self.legal_turns().contains(&dir) { dir = self.dir; }

@@ -62,7 +62,7 @@ pub fn run() {
         sleep(Duration::from_millis(1000 / FRAMERATE));
         if let Some(key_res) = reader.next() {
             let last_key = key_res.unwrap();
-            square = snake.next_square(
+            square = snake.move_snake(
                 match last_key {
                     Key::Up | Key::Char('w') => Some(Direction::Up),
                     Key::Down | Key::Char('s') => Some(Direction::Down),
@@ -72,7 +72,7 @@ pub fn run() {
                     _ => None,
                 }
             );
-        } else { square = snake.next_square(None); }
+        } else { square = snake.move_snake(None); }
         let (row, col) = square;
         match board[row][col] {
             CellType::Snake => { panic!("Ate yourself!"); },
