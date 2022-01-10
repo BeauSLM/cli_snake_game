@@ -59,11 +59,11 @@ pub fn run() {
     let mut writer = writer.lock().into_raw_mode().unwrap();
     write!(writer, "{}", cursor::Hide).unwrap();
     let mut square;
-    let mut reader = async_stdin().keys();
+    let mut keys = async_stdin().keys();
     loop {
         sleep(Duration::from_millis(1000 / FRAMERATE));
         square = snake.move_snake(
-            match reader.next().map(|dir| dir.unwrap()) {
+            match keys.next().map(|dir| dir.unwrap()) {
             Some(Key::Up) | Some(Key::Char('w')) => Some(Direction::Up),
             Some(Key::Down) | Some(Key::Char('s')) => Some(Direction::Down),
             Some(Key::Left) | Some(Key::Char('a')) => Some(Direction::Left),
