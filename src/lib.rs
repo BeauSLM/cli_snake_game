@@ -28,13 +28,13 @@ const FRAMERATE: u64 = 2;
 
 // TODO: remove equality
 #[derive(Debug, Clone, Copy)]
-pub enum CellType {
+enum CellType {
     Snake,
     Food,
     Empty,
 }
 
-pub fn setup(segments: &[(usize, usize)], food: &[(usize, usize)], dir: Direction) -> ([[CellType; SIZE]; SIZE], Snake) {
+fn setup(segments: &[(usize, usize)], food: &[(usize, usize)], dir: Direction) -> ([[CellType; SIZE]; SIZE], Snake) {
     assert!(food.len() + segments.len() < SIZE * SIZE);
     let mut board = [[CellType::Empty; SIZE]; SIZE];
     for (row, col) in segments {
@@ -89,7 +89,7 @@ pub fn run() {
     }
 }
 
-pub fn display(board: &[[CellType; SIZE]; SIZE], writer: &mut RawTerminal<StdoutLock>) {
+fn display(board: &[[CellType; SIZE]; SIZE], writer: &mut RawTerminal<StdoutLock>) {
     write!(writer, "{} {}", clear::All, cursor::Goto(1, 1)).unwrap();
     for row in board {
         for cell in row {

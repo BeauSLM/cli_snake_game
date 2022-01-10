@@ -1,15 +1,15 @@
 use super::*;
-pub const CAPACITY: usize = 500;
+const CAPACITY: usize = 500;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Direction {
+pub(crate) enum Direction {
     Left,
     Up,
     Right,
     Down,
 }
 
-pub struct Snake {
+pub(crate) struct Snake {
     segments: [(usize, usize); CAPACITY],
     head: usize,
     len: usize,
@@ -17,7 +17,7 @@ pub struct Snake {
 }
 
 impl Snake {
-    pub fn new(starting_snake: &[(usize, usize)], dir: Direction) -> Snake {
+    pub(crate) fn new(starting_snake: &[(usize, usize)], dir: Direction) -> Snake {
         assert!(starting_snake.len() < CAPACITY);
         let mut segments = [(0usize, 0usize); CAPACITY];
         let len = starting_snake.len();
@@ -33,7 +33,7 @@ impl Snake {
         }
     }
 
-    pub fn next_square(&mut self, dir: Option<Direction>) -> (usize, usize) {
+    pub(crate) fn next_square(&mut self, dir: Option<Direction>) -> (usize, usize) {
         let mut head = self.head;
         let mut dir = if let Some(d) = dir { d } else { self.dir };
         if !self.legal_turns().contains(&dir) { dir = self.dir; }
@@ -53,11 +53,11 @@ impl Snake {
         (new_row, new_col)
     }
 
-    pub fn eat(&mut self) {
+    pub(crate) fn eat(&mut self) {
         self.len += 1;
     }
 
-    pub fn old_tail(&self) -> (usize, usize) {
+    pub(crate) fn old_tail(&self) -> (usize, usize) {
         let tail_index = if self.head < self.len {
             CAPACITY - self.len + self.head
         } else {
