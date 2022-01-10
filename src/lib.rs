@@ -15,7 +15,7 @@ const SIZE: usize = 30;
 const FRAMERATE: u64 = 2;
 
 // TODO: remove equality
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 pub enum CellType {
     Snake,
     Food,
@@ -27,13 +27,11 @@ pub fn setup(segments: &[(usize, usize)], food: &[(usize, usize)], dir: Directio
     let mut board = [[CellType::Empty; SIZE]; SIZE];
     for (row, col) in segments {
         let (row, col) = (*row, *col);
-        assert_eq!(board[row][col], CellType::Empty);
         board[row][col] = CellType::Snake;
     }
 
     for (row, col) in food {
         let (row, col) = (*row, *col);
-        assert_eq!(board[row][col], CellType::Empty);
         board[row][col] = CellType::Food;
     }
     let snake = Snake::new(segments, dir);
@@ -69,7 +67,6 @@ pub fn run() {
             },
             CellType::Empty => {
                 let (row, col) = snake.old_tail();
-                assert_eq!(board[row][col], CellType::Snake);
                 board[row][col] = CellType::Empty;
             }
         }
