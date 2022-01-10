@@ -6,7 +6,7 @@ fn main() {
 }
 
 fn start_screen() {
-    print!("{}{}", clear::All, cursor::Goto(1, 1));
+    print!("{}{}", termion::clear::All, termion::cursor::Goto(1, 1));
     // Please note that I used an ascii generator, I'm shameless
     print!(
         r#"
@@ -17,5 +17,5 @@ fn start_screen() {
         /_______  /___|  (____  /__|_ \\___  >  \______  (____  /__|_|  /\___  >
                 \/     \/     \/     \/    \/          \/     \/      \/     \/ "#
     );
-    sleep(Duration::from_secs(2));
+    std::thread::sleep(std::time::Duration::from_secs(2));
 }
