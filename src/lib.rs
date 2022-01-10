@@ -57,11 +57,10 @@ pub fn run() {
     let mut writer = writer.lock().into_raw_mode().unwrap();
     write!(writer, "{}", cursor::Hide).unwrap();
     let mut square;
+    let mut reader = async_stdin().keys();
     loop {
-        // XXX: construct only one of these!
-        let reader = async_stdin();
         sleep(Duration::from_millis(1000 / FRAMERATE));
-        if let Some(key_res) = reader.keys().last() {
+        if let Some(key_res) = reader.next() {
             let last_key = key_res.unwrap();
             square = snake.next_square(
                 match last_key {
@@ -85,7 +84,7 @@ pub fn run() {
                 board[row][col] = CellType::Empty;
             }
         }
-        board[square.0][square.1] = CellType::Snake;
+        board[row][col] = CellType::Snake;
         display(&board, &mut writer);
     }
 }
