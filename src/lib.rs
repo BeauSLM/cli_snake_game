@@ -14,6 +14,18 @@ mod snake;
 const SIZE: usize = 30;
 const FRAMERATE: u64 = 2;
 
+// This might come in handy later
+/* const KEYS: [Key; 8] = [
+    Key::Up,
+    Key::Down,
+    Key::Left,
+    Key::Right,
+    Key::Char('w'),
+    Key::Char('s'),
+    Key::Char('a'),
+    Key::Char('d'),
+]; */
+
 // TODO: remove equality
 #[derive(Debug, Clone, Copy)]
 pub enum CellType {
@@ -38,15 +50,18 @@ pub fn setup(segments: &[(usize, usize)], food: &[(usize, usize)], dir: Directio
     (board, snake)
 }
 
+// XXX: lord almighty this needs to be split up
 pub fn run() {
-    let (mut board, mut snake) = setup(&[(0, 0), (0, 1)], &[(0, 4)], Direction::Right);
-    // let writer = stdout();
-    // let mut writer = writer.lock().into_raw_mode().unwrap();
+    let (mut board, mut snake) = setup(&[(0, 0), (0, 1)], &[(2, 4), (2, 5)], Direction::Right);
+    let writer = stdout();
+    let mut writer = writer.lock().into_raw_mode().unwrap();
+    write!(writer, "{}", cursor::Hide).unwrap();
     let mut square;
     loop {
-        let mut reader = async_stdin().keys();
+        // XXX: construct only one of these!
+        let reader = async_stdin();
         sleep(Duration::from_millis(1000 / FRAMERATE));
-        if let Some(key_res) = reader.last() {
+        if let Some(key_res) = reader.keys().last() {
             let last_key = key_res.unwrap();
             square = snake.next_square(
                 match last_key {
@@ -71,25 +86,23 @@ pub fn run() {
             }
         }
         board[square.0][square.1] = CellType::Snake;
-        display(&board);
-        // write!(writer, "{}", print_string).unwrap();
-        // writer.flush().unwrap();
+        display(&board, &mut writer);
     }
 }
 
-pub fn display(board: &[[CellType; SIZE]; SIZE]) {
-    println!("{}", clear::All);
-    let mut print_string = String::with_capacity(SIZE);
-    for row in board.iter() {
-        for col in row {
-            print_string.push(match col {
-                &CellType::Snake => '*',
-                &CellType::Food => '0',
-                _ => ' '
-            });
+pub fn display(board: &[[CellType; SIZE]; SIZE], writer: &mut RawTerminal<StdoutLock>) {
+    write!(writer, "{} {}", clear::All, cursor::Goto(1, 1)).unwrap();
+    for row in board {
+        for cell in row {
+            // XXX: write to the buffer with a variable somehow please god
+            match cell {
+                &CellType::Snake => write!(writer, "{}*{}", color::Fg(color::Green), style::Reset).unwrap(),
+                &CellType::Food => write!(writer, "{}0{}", color::Fg(color::Red), style::Reset).unwrap(),
+                _ => write!(writer, " ").unwrap(),
+            };
         }
-        println!("{}", print_string);
-        print_string.clear();
+        write!(writer, "\r\n").unwrap();
     }
+    writer.flush().unwrap();
 }
 
