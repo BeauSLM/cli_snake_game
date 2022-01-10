@@ -1,17 +1,19 @@
-use termion::{async_stdin, color, style, clear, cursor};
+use termion::{async_stdin};
+pub use termion::{clear, style, color, cursor};
 use termion::raw::{IntoRawMode, RawTerminal};
 use termion::event::Key;
 use termion::input::TermRead;
 use std::io::{Write, stdout, StdoutLock};
 use std::process;
-use std::thread::sleep;
-use std::time::Duration;
+pub use std::thread::sleep;
+pub use std::time::Duration;
 
 use crate::snake::*;
 
 mod snake;
 
 const SIZE: usize = 30;
+const MIDDLE: usize = SIZE / 2;
 const FRAMERATE: u64 = 2;
 
 // This might come in handy later
@@ -52,7 +54,7 @@ fn setup(segments: &[(usize, usize)], food: &[(usize, usize)], dir: Direction) -
 
 // XXX: lord almighty this needs to be split up
 pub fn run() {
-    let (mut board, mut snake) = setup(&[(0, 0), (0, 1)], &[(2, 4), (2, 5)], Direction::Right);
+    let (mut board, mut snake) = setup(&[(MIDDLE, MIDDLE), (MIDDLE, MIDDLE + 1)], &[(2, 4), (2, 5)], Direction::Right);
     let writer = stdout();
     let mut writer = writer.lock().into_raw_mode().unwrap();
     write!(writer, "{}", cursor::Hide).unwrap();
