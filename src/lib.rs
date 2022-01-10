@@ -1,9 +1,8 @@
-use termion::{async_stdin, color, style};
-use termion::raw::IntoRawMode;
-use termion::clear;
+use termion::{async_stdin, color, style, clear, cursor};
+use termion::raw::{IntoRawMode, RawTerminal};
 use termion::event::Key;
 use termion::input::TermRead;
-use std::io::{Read, Write, stdout};
+use std::io::{Write, stdout, StdoutLock};
 use std::process;
 use std::thread::sleep;
 use std::time::Duration;
