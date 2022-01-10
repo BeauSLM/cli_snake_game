@@ -62,19 +62,15 @@ pub fn run() {
     let mut reader = async_stdin().keys();
     loop {
         sleep(Duration::from_millis(1000 / FRAMERATE));
-        if let Some(key_res) = reader.next() {
-            let last_key = key_res.unwrap();
-            square = snake.move_snake(
-                match last_key {
-                    Key::Up | Key::Char('w') => Some(Direction::Up),
-                    Key::Down | Key::Char('s') => Some(Direction::Down),
-                    Key::Left | Key::Char('a') => Some(Direction::Left),
-                    Key::Right | Key::Char('d') => Some(Direction::Right),
-                    Key::Char('q') => process::exit(0), // TODO: quit screen!
-                    _ => None,
-                }
-            );
-        } else { square = snake.move_snake(None); }
+        square = snake.move_snake(
+            match reader.next().map(|dir| dir.unwrap()) {
+            Some(Key::Up) | Some(Key::Char('w')) => Some(Direction::Up),
+            Some(Key::Down) | Some(Key::Char('s')) => Some(Direction::Down),
+            Some(Key::Left) | Some(Key::Char('a')) => Some(Direction::Left),
+            Some(Key::Right) | Some(Key::Char('d')) => Some(Direction::Right),
+            Some(Key::Char('q')) => process::exit(0), // TODO: quit screen!
+            _ => None,
+        });
         let (row, col) = square;
         match board[row][col] {
             CellType::Snake => { panic!("Ate yourself!"); },

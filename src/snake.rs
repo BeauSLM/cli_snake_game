@@ -36,8 +36,7 @@ impl Snake {
 
     pub(crate) fn move_snake(&mut self, dir: Option<Direction>) -> (usize, usize) {
         let mut head = self.head;
-        let mut dir = if let Some(d) = dir { d } else { self.dir };
-        if !self.legal_turns().contains(&dir) { dir = self.dir; }
+        let dir = dir.map_or(self.dir, |d| if self.legal_turns().contains(&d) {d} else {self.dir});
         let (mut new_row, mut new_col) = self.segments[head];
         let mut out_of_bounds = false;
         match dir {
@@ -46,6 +45,7 @@ impl Snake {
             Direction::Right => if new_col == SIZE - 1 { out_of_bounds = true; } else { new_col += 1; },
             Direction::Down => if new_row == SIZE - 1 { out_of_bounds = true; } else { new_row += 1; },
         }
+        // TODO: go to loss screen
         if out_of_bounds { panic!("Out of bounds!"); }
         self.dir = dir;
         head = (head + 1) % CAPACITY;
@@ -67,10 +67,16 @@ impl Snake {
         self.segments[tail_index]
     }
 
+    // TODO: remove this, its scuffed
     fn legal_turns(&self) -> [Direction; 2] {
         match self.dir {
             Direction::Left | Direction::Right => [Direction::Down, Direction::Up],
             Direction::Up | Direction::Down => [Direction::Left, Direction::Right],
         }
+    }
+
+    // TODO: fancy check here!
+    fn is_legal_turn(&self, dir: Direction) {
+        unimplemented!();
     }
 }
