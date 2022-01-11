@@ -1,3 +1,4 @@
+use std::error;
 use super::*;
 const CAPACITY: usize = 500;
 
@@ -8,6 +9,18 @@ pub(crate) enum Direction {
     Right,
     Down,
 }
+
+#[derive(Debug)]
+pub struct OutOfBoundsError;
+
+impl std::fmt::Display for OutOfBoundsError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Out of bounds!")
+    }
+}
+
+
+impl error::Error for OutOfBoundsError {}
 
 // this is a struct because i may have multiple snakes at some point
 pub(crate) struct Snake {

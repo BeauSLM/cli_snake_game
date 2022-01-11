@@ -1,3 +1,4 @@
+use std::error;
 use crate::snake::*;
 use crate::io::*;
 mod snake;
@@ -13,6 +14,17 @@ enum CellType {
     Food,
     Empty,
 }
+
+#[derive(Debug)]
+pub(crate) struct BumpedTailError;
+
+impl std::fmt::Display for BumpedTailError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Bumped your tail!")
+    }
+}
+
+impl error::Error for BumpedTailError {}
 
 fn setup(segments: &[(usize, usize)], food: &[(usize, usize)], dir: Direction) -> ([[CellType; SIZE]; SIZE], Snake) {
     assert!(food.len() + segments.len() < SIZE * SIZE);
