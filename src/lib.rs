@@ -11,7 +11,7 @@ const SIZE: usize = 20;
 const MIDDLE: usize = SIZE / 2;
 const FRAMERATE: u64 = 2;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum CellType {
     Snake,
     Food,
@@ -81,19 +81,18 @@ pub fn run() {
     }
 }
 
-// BUG: loops indefinitely if the board has no empty cells!
 fn generate_food(board: &mut [[CellType; SIZE]; SIZE] ,rng: &mut DistIter<Uniform<usize>, ThreadRng, usize>) {
     let mut placed = false;
     let mut cell: (usize, usize);
     while !placed {
         cell = (rng.next().unwrap(), rng.next().unwrap());
-        if let CellType::Empty = board[cell.0][cell.1] {
+        if CellType::Snake != board[cell.0][cell.1] {
             board[cell.0][cell.1] = CellType::Food;
             placed = true;
         }
 
         cell = (rng.next().unwrap(), rng.next().unwrap());
-        if let CellType::Empty = board[cell.0][cell.1] {
+        if CellType::Snake != board[cell.0][cell.1] {
             board[cell.0][cell.1] = CellType::Food;
             placed = true;
         }
