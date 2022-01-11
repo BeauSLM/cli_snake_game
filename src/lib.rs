@@ -1,8 +1,7 @@
 use crate::snake::*;
 use crate::io::*;
-
 mod snake;
-mod io;
+pub mod io;
 
 const SIZE: usize = 30;
 const MIDDLE: usize = SIZE / 2;
