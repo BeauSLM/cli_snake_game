@@ -60,7 +60,7 @@ pub(crate) fn display(board: &[[CellType; SIZE]; SIZE], writer: &mut RawTerminal
     writer.flush().unwrap();
 }
 
-pub fn end_screen(status: Box<dyn error::Error>, writer: &mut RawTerminal<StdoutLock>) {
+pub fn end_screen(status: Box<dyn error::Error>, writer: &mut RawTerminal<StdoutLock>, score: u16) {
     writer.suspend_raw_mode().unwrap();
     print!("{}{}", termion::clear::All, termion::cursor::Goto(1, 1));
     // Please note that I used an ascii generator, I'm shameless
@@ -75,6 +75,7 @@ pub fn end_screen(status: Box<dyn error::Error>, writer: &mut RawTerminal<Stdout
     );
 
     println!("{}", status);
+    println!("Score: {}", score);
     std::thread::sleep(std::time::Duration::from_secs(2));
     std::process::exit(0);
 }

@@ -6,10 +6,11 @@ however I can only guarantee that it runs on Linux.
 TODO:
 - [x] add start screen 
 - [x] clean up control flow
-- [ ] optimize frame rendering (i.e. don't reprint entire board every frame)
+- [x] add end screen 
 - [ ] food generation 
 - [ ] make a nicer start screen
-- [ ] add results screen 
+- [ ] make a nicer end screen
+- [ ] optimize frame rendering (i.e. don't reprint entire board every frame)
 - [ ] windows compatibility?? 
 - [ ] implement a gui
 - [ ] windows compatibility for the gui?? 

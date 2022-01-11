@@ -43,6 +43,7 @@ fn setup(segments: &[(usize, usize)], food: &[(usize, usize)], dir: Direction) -
 }
 
 pub fn run() {
+    let mut score = 0u16;
     let (mut board, mut snake) = setup(&[(MIDDLE, MIDDLE), (MIDDLE, MIDDLE + 1)], &[(2, 4), (2, 5)], Direction::Right);
     let writer = stdout();
     let mut writer = writer.lock().into_raw_mode().unwrap();
@@ -54,16 +55,17 @@ pub fn run() {
         let (row, col) = match snake.move_snake(process_key(keys.next())) {
             Ok(cell) => cell,
             Err(e) => {
-                end_screen(e.into(), &mut writer);
+                end_screen(e.into(), &mut writer, score);
                 panic!("Shouldn't be reachable");
             }
         };
         match board[row][col] {
             CellType::Snake => { 
-                end_screen(BumpedTailError.into(), &mut writer);
+                end_screen(BumpedTailError.into(), &mut writer, score);
             },
             CellType::Food => {
                 snake.eat();
+                score += 1;
             },
             CellType::Empty => {
                 let (row, col) = snake.old_tail();
