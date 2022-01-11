@@ -7,7 +7,7 @@ use crate::io::*;
 mod snake;
 pub mod io;
 
-const SIZE: usize = 30;
+const SIZE: usize = 20;
 const MIDDLE: usize = SIZE / 2;
 const FRAMERATE: u64 = 2;
 
@@ -54,6 +54,7 @@ pub fn run() {
     loop {
         std::thread::sleep(std::time::Duration::from_millis(1000 / FRAMERATE));
         // TODO: remove row, col, use a mut tuple to allocate once instead
+        // TODO: handle moving the snake entirely in the snake - if you can
         let (row, col) = match snake.move_snake(process_key(keys.next())) {
             Ok(cell) => cell,
             Err(e) => {
@@ -80,6 +81,7 @@ pub fn run() {
     }
 }
 
+// BUG: loops indefinitely if the board has no empty cells!
 fn generate_food(board: &mut [[CellType; SIZE]; SIZE] ,rng: &mut DistIter<Uniform<usize>, ThreadRng, usize>) {
     let mut placed = false;
     let mut cell: (usize, usize);
