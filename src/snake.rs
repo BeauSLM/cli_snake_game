@@ -47,7 +47,7 @@ impl Snake {
         }
     }
 
-    pub(crate) fn move_snake(&mut self, dir: Option<Direction>) -> (usize, usize) {
+    pub(crate) fn move_snake(&mut self, dir: Option<Direction>) -> Result<(usize, usize), OutOfBoundsError> {
         let mut head = self.head;
         let dir = dir.map_or(self.dir, |d| if self.legal_turns().contains(&d) {d} else {self.dir});
         let (mut new_row, mut new_col) = self.segments[head];
@@ -59,12 +59,12 @@ impl Snake {
             Direction::Down => if new_row == SIZE - 1 { out_of_bounds = true; } else { new_row += 1; },
         }
         // TODO: go to loss screen
-        if out_of_bounds { panic!("Out of bounds!"); }
+        if out_of_bounds { return Err(OutOfBoundsError.into()); }
         self.dir = dir;
         head = (head + 1) % CAPACITY;
         self.segments[head] = (new_row, new_col);
         self.head = head;
-        (new_row, new_col)
+        Ok((new_row, new_col))
     }
 
     pub(crate) fn eat(&mut self) {

@@ -47,14 +47,21 @@ pub fn run() {
     let writer = stdout();
     let mut writer = writer.lock().into_raw_mode().unwrap();
     write!(writer, "{}", termion::cursor::Hide).unwrap();
-    let mut square;
     let mut keys = termion::async_stdin().keys();
     loop {
         std::thread::sleep(std::time::Duration::from_millis(1000 / FRAMERATE));
-        square = snake.move_snake(process_key(keys.next()));
-        let (row, col) = square;
+        // TODO: remove row, col, use a mut tuple to allocate once instead
+        let (row, col) = match snake.move_snake(process_key(keys.next())) {
+            Ok(cell) => cell,
+            Err(e) => {
+                end_screen(e.into(), &mut writer);
+                panic!("Shouldn't be reachable");
+            }
+        };
         match board[row][col] {
-            CellType::Snake => { panic!("Ate yourself!"); },
+            CellType::Snake => { 
+                end_screen(BumpedTailError.into(), &mut writer);
+            },
             CellType::Food => {
                 snake.eat();
             },
