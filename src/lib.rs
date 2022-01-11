@@ -1,4 +1,7 @@
 use std::error;
+use rand::distributions::{DistIter, Uniform};
+use rand::prelude::{Distribution, ThreadRng};
+
 use crate::snake::*;
 use crate::io::*;
 mod snake;
@@ -26,28 +29,27 @@ impl std::fmt::Display for BumpedTailError {
 
 impl error::Error for BumpedTailError {}
 
-fn setup(segments: &[(usize, usize)], food: &[(usize, usize)], dir: Direction) -> ([[CellType; SIZE]; SIZE], Snake) {
-    assert!(food.len() + segments.len() < SIZE * SIZE);
+fn setup(rng: &mut DistIter<Uniform<usize>, ThreadRng, usize>) -> ([[CellType; SIZE]; SIZE], Snake) {
     let mut board = [[CellType::Empty; SIZE]; SIZE];
-    for (row, col) in segments {
-        let (row, col) = (*row, *col);
+    let starting_snake = [(MIDDLE, MIDDLE), (MIDDLE, MIDDLE + 1)];
+    let dir = Direction::Right;
+    for (row, col) in starting_snake {
         board[row][col] = CellType::Snake;
     }
 
-    for (row, col) in food {
-        let (row, col) = (*row, *col);
-        board[row][col] = CellType::Food;
-    }
-    let snake = Snake::new(segments, dir);
+    generate_food(&mut board, rng);
+    let snake = Snake::new(&starting_snake, dir);
     (board, snake)
 }
 
 pub fn run() {
-    let mut score = 0u16;
-    let (mut board, mut snake) = setup(&[(MIDDLE, MIDDLE), (MIDDLE, MIDDLE + 1)], &[(2, 4), (2, 5)], Direction::Right);
+    // initialize variables
+    let mut rng = Uniform::new_inclusive(0usize, SIZE - 1).sample_iter(rand::thread_rng());
+    let (mut board, mut snake) = setup(&mut rng);
     let writer = stdout();
     let mut writer = writer.lock().into_raw_mode().unwrap();
     write!(writer, "{}", termion::cursor::Hide).unwrap();
+    let mut score = 0u16;
     let mut keys = termion::async_stdin().keys();
     loop {
         std::thread::sleep(std::time::Duration::from_millis(1000 / FRAMERATE));
@@ -66,6 +68,7 @@ pub fn run() {
             CellType::Food => {
                 snake.eat();
                 score += 1;
+                generate_food(&mut board, &mut rng);
             },
             CellType::Empty => {
                 let (row, col) = snake.old_tail();
@@ -77,3 +80,20 @@ pub fn run() {
     }
 }
 
+fn generate_food(board: &mut [[CellType; SIZE]; SIZE] ,rng: &mut DistIter<Uniform<usize>, ThreadRng, usize>) {
+    let mut placed = false;
+    let mut cell: (usize, usize);
+    while !placed {
+        cell = (rng.next().unwrap(), rng.next().unwrap());
+        if let CellType::Empty = board[cell.0][cell.1] {
+            board[cell.0][cell.1] = CellType::Food;
+            placed = true;
+        }
+
+        cell = (rng.next().unwrap(), rng.next().unwrap());
+        if let CellType::Empty = board[cell.0][cell.1] {
+            board[cell.0][cell.1] = CellType::Food;
+            placed = true;
+        }
+    }
+}

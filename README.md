@@ -7,7 +7,8 @@ TODO:
 - [x] add start screen 
 - [x] clean up control flow
 - [x] add end screen 
-- [ ] food generation 
+- [x] food generation 
+- [ ] increase game speed when food is eaten
 - [ ] make a nicer start screen
 - [ ] make a nicer end screen
 - [ ] optimize frame rendering (i.e. don't reprint entire board every frame)
