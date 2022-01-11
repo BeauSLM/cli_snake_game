@@ -6,6 +6,7 @@ however I can only guarantee that it runs on Linux.
 TODO:
 - [x] add start screen 
 - [x] clean up control flow
+- [ ] optimize frame rendering (i.e. don't reprint entire board every frame)
 - [ ] food generation 
 - [ ] make a nicer start screen
 - [ ] add results screen 
