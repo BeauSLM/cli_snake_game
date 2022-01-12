@@ -8,6 +8,7 @@ TODO:
 - [x] clean up control flow
 - [x] add end screen 
 - [x] food generation 
+- [ ] add victory screen 
 - [ ] increase game speed when food is eaten
 - [ ] make a nicer start screen
 - [ ] make a nicer end screen
