@@ -58,13 +58,13 @@ pub fn run() {
         let (row, col) = match snake.move_snake(process_key(keys.next())) {
             Ok(cell) => cell,
             Err(e) => {
-                end_screen(e.into(), &mut writer, score);
+                game_over(e.into(), &mut writer, score);
                 panic!("Shouldn't be reachable");
             }
         };
         match board[row][col] {
             CellType::Snake => { 
-                end_screen(BumpedTailError.into(), &mut writer, score);
+                game_over(BumpedTailError.into(), &mut writer, score);
             },
             CellType::Food => {
                 snake.eat();
