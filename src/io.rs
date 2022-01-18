@@ -79,3 +79,21 @@ pub fn game_over(status: Box<dyn error::Error>, writer: &mut RawTerminal<StdoutL
     std::thread::sleep(std::time::Duration::from_secs(2));
     std::process::exit(0);
 }
+
+pub fn victory(writer: &mut RawTerminal<StdoutLock>) {
+    writer.suspend_raw_mode().unwrap();
+    print!("{}{}", termion::clear::All, termion::cursor::Goto(1, 1));
+    // Please note that I used an ascii generator, I'm shameless
+    println!(
+        r#"
+           ____   ____.__        __                       ._. 
+           \   \ /   /|__| _____/  |_  ___________ ___.__.| | 
+            \   Y   / |  |/ ___\   __\/  _ \_  __ <   |  || | 
+             \     /  |  \  \___|  | (  <_> )  | \/\___  | \| 
+              \___/   |__|\___  >__|  \____/|__|   / ____| __ 
+                              \/                   \/      \/ "#
+    );
+
+    std::thread::sleep(std::time::Duration::from_secs(2));
+    std::process::exit(0);
+}

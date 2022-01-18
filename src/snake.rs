@@ -1,6 +1,6 @@
 use std::error;
 use super::*;
-const CAPACITY: usize = 500;
+const CAPACITY: usize = SIZE * SIZE - 1;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum Direction {
@@ -67,8 +67,9 @@ impl Snake {
         Ok((new_row, new_col))
     }
 
-    pub(crate) fn eat(&mut self) {
+    pub(crate) fn eat(&mut self) -> bool {
         self.len += 1;
+        self.len < CAPACITY
     }
 
     pub(crate) fn old_tail(&self) -> (usize, usize) {

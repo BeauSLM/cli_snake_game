@@ -67,7 +67,7 @@ pub fn run() {
                 game_over(BumpedTailError.into(), &mut writer, score);
             },
             CellType::Food => {
-                snake.eat();
+                if !snake.eat() { victory(&mut writer); }
                 score += 1;
                 generate_food(&mut board, &mut rng);
             },
