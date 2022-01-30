@@ -1,6 +1,6 @@
 [package]
-name = "snake_game"
-version = "0.1.0"
+name = "cli_snake_game"
+version = "1.0.0"
 authors = ["Beau McCartney <mccartney.beausl@gmail.com>"]
 edition = "2021"
 
