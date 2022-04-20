@@ -61,6 +61,7 @@ pub(crate) fn display(board: &[[CellType; SIZE]; SIZE], writer: &mut RawTerminal
 }
 
 pub fn game_over(status: Box<dyn error::Error>, writer: &mut RawTerminal<StdoutLock>, score: u16) {
+    write!(writer, "{}", termion::cursor::Show).unwrap();
     writer.suspend_raw_mode().unwrap();
     print!("{}{}", termion::clear::All, termion::cursor::Goto(1, 1));
     // Please note that I used an ascii generator, I'm shameless
@@ -81,6 +82,7 @@ pub fn game_over(status: Box<dyn error::Error>, writer: &mut RawTerminal<StdoutL
 }
 
 pub fn victory(writer: &mut RawTerminal<StdoutLock>) {
+    write!(writer, "{}", termion::cursor::Show).unwrap();
     writer.suspend_raw_mode().unwrap();
     print!("{}{}", termion::clear::All, termion::cursor::Goto(1, 1));
     // Please note that I used an ascii generator, I'm shameless
