@@ -59,7 +59,7 @@ pub fn run() {
             Ok(cell) => cell,
             Err(e) => {
                 game_over(e.into(), &mut writer, score);
-                panic!("Shouldn't be reachable");
+                unreachable!()
             }
         };
         match board[row][col] {
